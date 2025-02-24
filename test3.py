@@ -10,12 +10,13 @@ import pyautogui
 import subprocess
 from pywinauto import Application
 from loop import perform_actions  # 导入 perform_actions 函数
+from webdriver_manager.chrome import ChromeDriverManager
 
 # 配置 WebDriver 路径
 # 请将此路径替换为你的 ChromeDriver 路径
 driver_path = 'C:/driver/chromedriver-win64/chromedriver.exe'
-# 创建 ChromeDriver 服务
-service = Service(driver_path)
+# 替换原来的 driver_path 和 service 设置
+service = Service(ChromeDriverManager().install())
 
 # 启动 Chrome 浏览器并启用远程调试
 # 请将此路径替换为你的 Chrome 可执行文件路径
@@ -58,7 +59,7 @@ try:
     driver.execute_script(
         "arguments[0].focus();", search_box)  # 使用 JavaScript 聚焦ｘ
     search_box.click()  # 点击进入输入框
-    search_box.send_keys('Angular')  # 输入搜索关键字
+    search_box.send_keys('ソフトウェア開発')  # 输入搜索关键字
     search_box.send_keys(Keys.RETURN)
     time.sleep(2)  # 根据网络情况调整等待时间
 except Exception as e:

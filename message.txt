@@ -1,0 +1,2 @@
+path=D:\WeChat\WeChat.exe
+message=周六下午有空吗？

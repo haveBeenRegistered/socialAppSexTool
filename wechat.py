@@ -2,7 +2,7 @@ from pywinauto.application import Application
 import pyautogui
 import time
 import pyperclip
-
+import re
 
 def move_and_click(coordinates):
     """
@@ -65,15 +65,32 @@ def process_wechat_message(search_text):
     # 点击输入文本框
     move_and_click([385, 918, 1912, 994])  # 需要调整坐标
 
-    # 使用函数输入中文文本
-    input_chinese_text('早上好')
-
+    with open("message.txt", "r", encoding="utf-8") as f:
+        content = f.read()
+    
+    # 提取 message= 后的内容，不要求必须有引号
+    match = re.search(r'message\s*=\s*"?([^"\n]+)"?', content)
+    if match:
+        message_content = match.group(1)
+    else:
+        raise Exception("message.txt 中未找到 message 信息")
+    # 使用函数输入文本
+    input_chinese_text(message_content)
     # 发送消息file
-    # pyautogui.press('enter')
+    pyautogui.press('enter')
     time.sleep(1)
 
 # 启动微信应用程序
-app = Application(backend='uia').start(r"D:\WeChat\WeChat.exe")
+# app = Application(backend='uia').start(r"D:\WeChat\WeChat.exe")
+# 从 message.txt 中读取路径
+with open("message.txt", "r", encoding="utf-8") as f:
+    content = f.read()
+    match = re.search(r'path\s*=\s*"?([^"\s]+)"?', content)
+if match:
+    exe_path = match.group(1)
+else:
+    raise Exception("message.txt 中未找到 path 信息")
+app = Application(backend='uia').start(exe_path)
 
 # 等待应用程序完全加载
 time.sleep(5)
@@ -88,7 +105,7 @@ with open('wechatSex.txt', 'r', encoding='utf-8') as file:
 
 for i, line in enumerate(lines):
     search_text = line.strip()  # 去除换行符
-    if search_text == "":  # 如果是空字符串
+    if search_text == "":  # 如果是空字符串File
         print("武运昌隆")
         exit()  # 结束程序
     process_wechat_message(search_text)

@@ -51,7 +51,8 @@ def update_pagination_third_line(file_path="C:/Users/81804/Desktop/python/pagina
             return False
         else:
             # 构造新的第三行内容：亚马逊链接拼接 last_item a 标签的 href
-            new_third_line = "https://www.amazon.co.jp" + last_item.find("a")["href"] + "\n"
+            new_third_line = "https://www.amazon.co.jp" + \
+                last_item.find("a")["href"] + "\n"
             # 更新全局 url（并存入 url_list 列表）
             global updated_url
             updated_url = new_third_line.strip()
@@ -77,6 +78,11 @@ def update_pagination_third_line(file_path="C:/Users/81804/Desktop/python/pagina
 if __name__ == "__main__":
     result = update_pagination_third_line()
     print(result)
+    # 如果传入参数，则使用该参数作为搜索关键词，否则使用默认值
+    if len(sys.argv) > 1:
+        sponsorFilter = sys.argv[1]
+    else:
+        sponsorFilter = False
     if result:
         headers = {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36",
@@ -119,12 +125,19 @@ if __name__ == "__main__":
                 }
                 for i in range(len(s_image_src_list))
             }
-        
-            # 先从 product_dict 中筛选掉 price 为 -1 的对象，再筛选掉 sponsor 为 1 的对象
-            filtered_products = {
-                i: prod for i, prod in product_dict.items()
-                if prod["price"] > 1  # and sponsor_list[i] != 1
-            }
+
+            # 根据 sponsorFilter 进行过滤
+            if sponsorFilter:
+                # 如果 sponsorFilter 为 True，则过滤掉 sponsor 值为 1 的商品
+                filtered_products = {
+                    i: prod for i, prod in product_dict.items()
+                    if prod["price"] > 1 and prod["sponsor"] != 1
+                }
+            else:
+                filtered_products = {
+                    i: prod for i, prod in product_dict.items()
+                    if prod["price"] > 1
+                }
             print(f"have been filtered：{len(filtered_products)}")
         
             # 然后依据 price 的值从小到大重新排序

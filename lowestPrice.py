@@ -4,7 +4,6 @@ from bs4 import BeautifulSoup
 import urllib.parse
 import json
 import sys
-import re
 
 
 def extract_data_from_divs(divs,
@@ -123,6 +122,8 @@ def get_amazon_search_results():
         keyWord = sys.argv[1]
     else:
         keyWord = "蕁麻疹"
+    # 如果传入参数有两个，则 sponsorFilter 设置为第二个参数，否则为 False
+    sponsorFilter = sys.argv[2] if len(sys.argv) > 2 else False
     encoded_keyword = urllib.parse.quote(keyWord)
     url = f"https://www.amazon.co.jp/s?k={encoded_keyword}&s=price-asc-rank"
     headers = {
@@ -275,11 +276,18 @@ def get_amazon_search_results():
         for i in range(len(s_image_src_list))
     }
 
-    # 先从 product_dict 中筛选掉 price 为 -1 的对象，再筛选掉 sponsor 为 1 的对象
-    filtered_products = {
-        i: prod for i, prod in product_dict.items()
-        if prod["price"] > 1  # and sponsor_list[i] != 1
-    }
+    # 根据 sponsorFilter 进行过滤
+    if sponsorFilter:
+        # 如果 sponsorFilter 为 True，则过滤掉 sponsor 值为 1 的商品
+        filtered_products = {
+            i: prod for i, prod in product_dict.items()
+            if prod["price"] > 1 and prod["sponsor"] != 1
+        }
+    else:
+        filtered_products = {
+            i: prod for i, prod in product_dict.items()
+            if prod["price"] > 1
+        }
     print(f"have been filtered：{len(filtered_products)}")
 
     # 然后依据 price 的值从小到大重新排序

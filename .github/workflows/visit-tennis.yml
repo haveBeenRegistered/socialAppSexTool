@@ -1,0 +1,13 @@
+name: Daily Visit Tennis Page
+
+on:
+  schedule:
+    - cron: '0 23 * * *'   # 每天 UTC 23点，即东京时间8点
+  workflow_dispatch:
+
+jobs:
+  visit-tennis:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Curl visit tennis page
+        run: curl -L "https://checkoutreact.top/#/searchTennis"

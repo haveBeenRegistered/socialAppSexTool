@@ -23,4 +23,4 @@ jobs:
       - name: Run Playwright script
         run: |
           npx playwright install
-          npx playwright codegen https://checkoutreact.top/#/searchTennis --headless --save-storage=storage.json --timeout=10000
+          node visit.js

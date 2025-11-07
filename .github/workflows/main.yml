@@ -9,5 +9,18 @@ jobs:
   visit-tennis:
     runs-on: ubuntu-latest
     steps:
-      - name: Curl visit tennis page
-        run: curl -L "https://checkoutreact.top/#/searchTennis"
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install Playwright
+        run: npm install -D playwright
+
+      - name: Run Playwright script
+        run: |
+          npx playwright install
+          npx playwright codegen https://checkoutreact.top/#/searchTennis --save-storage=storage.json --timeout=10000
